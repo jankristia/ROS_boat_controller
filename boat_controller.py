@@ -18,9 +18,18 @@ class BoatController(Node):
         )
         self.sync.registerCallback(self.control_callback)
 
+        self.thrust_publisher_ = self.create_publisher(Float32MultiArray, 'thrust', 10)
+
+
     def control_callback(self, lidar_msg, state_msg):
         """Callback for synchronized Lidar and state data."""
         self.get_logger().info(f'Received synchronized data: Lidar={lidar_msg.data}, State={state_msg.data}')
+        thrust = np.random.uniform(0.0, 1.0, 2).tolist()
+
+        msg = Float32MultiArray()
+        msg.data = thrust
+        self.thrust_publisher_.publish(msg)
+        self.get_logger().info(f'Publishing thrust: "{msg.data}"')
 
 def main(args=None):
     rclpy.init(args=args)
